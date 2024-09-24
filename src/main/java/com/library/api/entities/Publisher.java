@@ -21,7 +21,7 @@ public class Publisher {
 
     private LocalDateTime createdAt;
     private String name;
-    private String cityName;
+    private String city;
 
     @PrePersist
     public void prePersist() {

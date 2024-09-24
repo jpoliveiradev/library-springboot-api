@@ -21,12 +21,7 @@ public class Customer {
 
     private LocalDateTime createdAt;
     private String name;
-    private String cityName;
-    private Long address;
     private String email;
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
+    private String address;
+    private String city;
 }

@@ -1,0 +1,6 @@
+CREATE TABLE publishers (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL
+);

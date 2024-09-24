@@ -1,0 +1,8 @@
+CREATE TABLE customers (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL
+);
