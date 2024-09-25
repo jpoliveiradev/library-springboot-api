@@ -27,4 +27,10 @@ public class CustomerController {
         PagedResultDTO<CustomerResponseDTO> allCustomers = this.customerService.getAll(page, size);
         return ResponseEntity.ok(allCustomers);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerResponseDTO> getById(@PathVariable Long id) {
+        CustomerResponseDTO customer = this.customerService.getById(id);
+        return ResponseEntity.ok(customer);
+    }
 }

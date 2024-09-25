@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -48,5 +50,19 @@ public class CustomerServiceImpl implements CustomerService {
                 customersDTOPage.getTotalElements(),
                 customersDTOPage.getTotalPages()
         );
+    }
+
+    @Override
+    public CustomerResponseDTO getById(Long id) {
+        return customerRepository.findById(id)
+                .map(customer -> new CustomerResponseDTO(
+                        customer.getId(),
+                        customer.getCreatedAt(),
+                        customer.getName(),
+                        customer.getEmail(),
+                        customer.getAddress(),
+                        customer.getCity()
+                ))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
     }
 }
