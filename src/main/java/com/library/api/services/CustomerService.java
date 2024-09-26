@@ -7,6 +7,12 @@ import com.library.api.entities.Customer;
 
 public interface CustomerService {
     Customer createCustomer(CustomerRequestDTO data);
+
     PagedResultDTO<CustomerResponseDTO> getAll(int page, int size);
+
     CustomerResponseDTO getById(Long id);
+
+    void updateCustomer(Long id, CustomerRequestDTO body);
+
+    void deleteCustomer(Long id);
 }

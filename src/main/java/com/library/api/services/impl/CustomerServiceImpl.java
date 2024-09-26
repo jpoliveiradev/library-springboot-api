@@ -65,4 +65,26 @@ public class CustomerServiceImpl implements CustomerService {
                 ))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
     }
+
+    @Override
+    public void updateCustomer(Long id, CustomerRequestDTO data) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+
+        customer.setName(data.name());
+        customer.setEmail(data.email());
+        customer.setAddress(data.address());
+        customer.setCity(data.city());
+
+        customerRepository.save(customer);
+    }
+
+    @Override
+    public void deleteCustomer(Long id) {
+        if (!customerRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado");
+        }
+
+        customerRepository.deleteById(id);
+    }
 }

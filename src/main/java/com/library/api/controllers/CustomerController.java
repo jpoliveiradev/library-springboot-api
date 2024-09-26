@@ -6,6 +6,7 @@ import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.entities.Customer;
 import com.library.api.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<Customer> create(@RequestBody CustomerRequestDTO body) {
         Customer customer = this.customerService.createCustomer(body);
-        return ResponseEntity.ok(customer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(customer);
     }
 
     @GetMapping
@@ -32,5 +33,17 @@ public class CustomerController {
     public ResponseEntity<CustomerResponseDTO> getById(@PathVariable Long id) {
         CustomerResponseDTO customer = this.customerService.getById(id);
         return ResponseEntity.ok(customer);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody CustomerRequestDTO body) {
+        this.customerService.updateCustomer(id, body);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.customerService.deleteCustomer(id);
+        return ResponseEntity.noContent().build();
     }
 }
