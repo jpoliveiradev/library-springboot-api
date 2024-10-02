@@ -4,6 +4,7 @@ import com.library.api.dtos.customer.CustomerRequestDTO;
 import com.library.api.dtos.customer.CustomerResponseDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.entities.Customer;
+import com.library.api.mappers.CustomerMapper;
 import com.library.api.repositories.CustomerRepository;
 import com.library.api.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @Override
     public Customer createCustomer(CustomerRequestDTO data) {
-        Customer newCustomer = new Customer(data);
+        if (customerRepository.existsByEmail(data.email()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esse email já está cadastrado");
 
+        Customer newCustomer = new Customer(data);
         customerRepository.save(newCustomer);
         return newCustomer;
     }
@@ -33,15 +38,7 @@ public class CustomerServiceImpl implements CustomerService {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Customer> customersPage = this.customerRepository.findAll(pageable);
-
-        Page<CustomerResponseDTO> customersDTOPage = customersPage.map(customer -> new CustomerResponseDTO(
-                customer.getId(),
-                customer.getCreatedAt(),
-                customer.getName(),
-                customer.getEmail(),
-                customer.getAddress(),
-                customer.getCity()
-        ));
+        Page<CustomerResponseDTO> customersDTOPage = customersPage.map(customerMapper::mapCustomerToDTO);
 
         return new PagedResultDTO<>(
                 customersDTOPage.getContent(),
@@ -57,7 +54,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findById(id)
                 .map(customer -> new CustomerResponseDTO(
                         customer.getId(),
-                        customer.getCreatedAt(),
                         customer.getName(),
                         customer.getEmail(),
                         customer.getAddress(),

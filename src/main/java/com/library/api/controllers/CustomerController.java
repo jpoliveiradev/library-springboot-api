@@ -5,6 +5,7 @@ import com.library.api.dtos.customer.CustomerResponseDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.entities.Customer;
 import com.library.api.services.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<Customer> create(@RequestBody CustomerRequestDTO body) {
+    public ResponseEntity<Customer> create(@RequestBody @Valid CustomerRequestDTO body) {
         Customer customer = this.customerService.createCustomer(body);
         return ResponseEntity.status(HttpStatus.CREATED).body(customer);
     }
