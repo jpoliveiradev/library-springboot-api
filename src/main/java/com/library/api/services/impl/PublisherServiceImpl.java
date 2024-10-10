@@ -53,4 +53,24 @@ public class PublisherServiceImpl implements PublisherService {
 
         return publisherMapper.mapPublisherToDTO(publisher);
     }
+
+    @Override
+    public void updatePublisher(Long id, PublisherRequestDTO data) {
+        Publisher publisher = this.publisherRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
+
+        publisher.setName(data.name());
+        publisher.setCity(data.city());
+
+        publisherRepository.save(publisher);
+    }
+
+    @Override
+    public void deletePublisher(Long id) {
+        if (!publisherRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada");
+        }
+
+        publisherRepository.deleteById(id);
+    }
 }

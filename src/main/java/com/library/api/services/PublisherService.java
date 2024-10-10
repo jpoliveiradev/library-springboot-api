@@ -11,4 +11,8 @@ public interface PublisherService {
     PagedResultDTO<PublisherResponseDTO> getAll(int page, int size);
 
     PublisherResponseDTO getById(Long id);
+
+    void updatePublisher(Long id, PublisherRequestDTO body);
+
+    void deletePublisher(Long id);
 }
