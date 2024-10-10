@@ -51,15 +51,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponseDTO getById(Long id) {
-        return customerRepository.findById(id)
-                .map(customer -> new CustomerResponseDTO(
-                        customer.getId(),
-                        customer.getName(),
-                        customer.getEmail(),
-                        customer.getAddress(),
-                        customer.getCity()
-                ))
+        Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+
+        return customerMapper.mapCustomerToDTO(customer);
     }
 
     @Override
