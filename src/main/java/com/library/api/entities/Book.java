@@ -1,9 +1,9 @@
 package com.library.api.entities;
 
+import com.library.api.dtos.book.BookRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Book {
     @Id
@@ -29,8 +28,16 @@ public class Book {
     @JoinColumn(name = "publisher_id", referencedColumnName = "id")
     private Publisher publisher;
 
-    @PrePersist
-    public void prePersist() {
+    public Book() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public Book(BookRequestDTO data, Publisher publisher) {
+        this.createdAt = LocalDateTime.now();
+        this.name = data.name();
+        this.author = data.author();
+        this.releaseYear = data.releaseYear();
+        this.quantity = data.quantity();
+        this.publisher = publisher;
     }
 }
