@@ -24,6 +24,9 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public Publisher createPublisher(PublisherRequestDTO data) {
+        if (publisherRepository.existsByName(data.name()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Editora já cadastrada");
+
         Publisher newPublisher = new Publisher(data);
         publisherRepository.save(newPublisher);
 
@@ -58,6 +61,9 @@ public class PublisherServiceImpl implements PublisherService {
     public void updatePublisher(Long id, PublisherRequestDTO data) {
         Publisher publisher = this.publisherRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
+
+        if (!data.name().equals(publisher.getName()) && publisherRepository.existsByName(data.name()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Editora já cadastrada");
 
         publisher.setName(data.name());
         publisher.setCity(data.city());

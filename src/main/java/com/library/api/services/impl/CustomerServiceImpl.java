@@ -26,7 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer createCustomer(CustomerRequestDTO data) {
         if (customerRepository.existsByEmail(data.email()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esse email já está cadastrado");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Esse email já cadastrado");
 
         Customer newCustomer = new Customer(data);
         customerRepository.save(newCustomer);
