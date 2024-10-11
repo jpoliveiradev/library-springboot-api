@@ -2,6 +2,7 @@ package com.library.api.controllers;
 
 import com.library.api.dtos.book.BookRequestDTO;
 import com.library.api.dtos.book.BookResponseDTO;
+import com.library.api.dtos.customer.CustomerRequestDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.entities.Book;
 import com.library.api.services.BookService;
@@ -40,5 +41,19 @@ public class BookController {
     public ResponseEntity<BookResponseDTO> getById(@PathVariable Long id) {
         BookResponseDTO book = this.bookService.getById(id);
         return ResponseEntity.ok(book);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update book")
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody BookRequestDTO body) {
+        this.bookService.updateBook(id, body);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete book")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
     }
 }

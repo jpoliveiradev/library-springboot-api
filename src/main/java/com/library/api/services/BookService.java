@@ -11,4 +11,8 @@ public interface BookService {
     PagedResultDTO<BookResponseDTO> getAll(int page, int size);
 
     BookResponseDTO getById(Long id);
+
+    void updateBook(Long id, BookRequestDTO body);
+
+    void deleteBook(Long id);
 }

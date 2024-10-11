@@ -29,6 +29,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book createBook(BookRequestDTO data) {
+        if (bookRepository.existsByName(data.name()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Livro já cadastrado");
+
         Publisher publisher = publisherRepository.findById(data.publisher_id())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
 
@@ -40,7 +43,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public PagedResultDTO<BookResponseDTO> getAll(int page, int size) {
-                Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size);
 
         Page<Book> booksPage = this.bookRepository.findAll(pageable);
         Page<BookResponseDTO> booksDTOPage = booksPage.map(bookMapper::mapBookToDTO);
@@ -57,8 +60,37 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponseDTO getById(Long id) {
         Book book = this.bookRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado"));
 
         return bookMapper.mapBookToDTO(book);
+    }
+
+    @Override
+    public void updateBook(Long id, BookRequestDTO data) {
+        Book book = this.bookRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado"));
+
+        Publisher publisher = publisherRepository.findById(data.publisher_id())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
+
+        if (!data.name().equals(book.getName()) && bookRepository.existsByName(data.name()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Livro já cadastrado");
+
+        book.setName(data.name());
+        book.setAuthor(data.author());
+        book.setReleaseYear(data.releaseYear());
+        book.setQuantity(data.quantity());
+        book.setPublisher(publisher);
+
+        bookRepository.save(book);
+    }
+
+    @Override
+    public void deleteBook(Long id) {
+        if (!bookRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado");
+        }
+
+        bookRepository.deleteById(id);
     }
 }
