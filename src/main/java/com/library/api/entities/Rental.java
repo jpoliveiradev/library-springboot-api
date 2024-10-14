@@ -1,20 +1,18 @@
 package com.library.api.entities;
 
+import com.library.api.dtos.rentals.RentalRequestCreateDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Table(name = "rentals")
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Rental {
     @Id
@@ -34,8 +32,15 @@ public class Rental {
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
-    @PrePersist
-    public void prePersist() {
+    public Rental() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public Rental(RentalRequestCreateDTO data, Book book, Customer customer) {
+        this.createdAt = LocalDateTime.now();
+        this.book = book;
+        this.customer = customer;
+        this.rentalDate = data.rentalDate();
+        this.forecastDate = data.forecastDate();
     }
 }
