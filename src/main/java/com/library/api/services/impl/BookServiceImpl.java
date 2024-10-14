@@ -8,6 +8,7 @@ import com.library.api.entities.Publisher;
 import com.library.api.mappers.BookMapper;
 import com.library.api.repositories.BookRepository;
 import com.library.api.repositories.PublisherRepository;
+import com.library.api.repositories.RentalRepository;
 import com.library.api.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,8 @@ public class BookServiceImpl implements BookService {
     private BookRepository bookRepository;
     @Autowired
     private PublisherRepository publisherRepository;
+    @Autowired
+    private RentalRepository rentalRepository;
     @Autowired
     private BookMapper bookMapper;
 
@@ -90,7 +93,9 @@ public class BookServiceImpl implements BookService {
         if (!bookRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado");
         }
-
+        if (rentalRepository.existsByBookId(id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Existem aluguéis cadastrados com esse livro");
+        }
         bookRepository.deleteById(id);
     }
 }

@@ -6,6 +6,7 @@ import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.entities.Customer;
 import com.library.api.mappers.CustomerMapper;
 import com.library.api.repositories.CustomerRepository;
+import com.library.api.repositories.RentalRepository;
 import com.library.api.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private RentalRepository rentalRepository;
     @Autowired
     private CustomerMapper customerMapper;
 
@@ -75,7 +78,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (!customerRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado");
         }
-
+        if (rentalRepository.existsByCustomerId(id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Existem aluguéis cadastrados com esse cliente");
+        }
         customerRepository.deleteById(id);
     }
 }

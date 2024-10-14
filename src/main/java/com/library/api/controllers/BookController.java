@@ -2,7 +2,6 @@ package com.library.api.controllers;
 
 import com.library.api.dtos.book.BookRequestDTO;
 import com.library.api.dtos.book.BookResponseDTO;
-import com.library.api.dtos.customer.CustomerRequestDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.entities.Book;
 import com.library.api.services.BookService;
@@ -32,8 +31,8 @@ public class BookController {
     @GetMapping
     @Operation(summary = "Get all books")
     public ResponseEntity<PagedResultDTO<BookResponseDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        PagedResultDTO<BookResponseDTO> allCustomers = this.bookService.getAll(page, size);
-        return ResponseEntity.ok(allCustomers);
+        PagedResultDTO<BookResponseDTO> allBooks = this.bookService.getAll(page, size);
+        return ResponseEntity.ok(allBooks);
     }
 
     @GetMapping("/{id}")
