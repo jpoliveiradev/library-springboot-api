@@ -1,6 +1,5 @@
 package com.library.api.services.impl;
 
-
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.dtos.rentals.RentalRequestCreateDTO;
 import com.library.api.dtos.rentals.RentalResponseDTO;
@@ -19,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDate;
 
 @Service
 public class RentalServiceImpl implements RentalService {
@@ -66,5 +67,26 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluguel não encontrado"));
 
         return rentalMapper.mapRentalToDTO(rental);
+    }
+
+    @Override
+    public void returnRental(Long id) {
+        Rental rental = this.rentalRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluguel não encontrado"));
+
+        rental.setReturnDate(LocalDate.now());
+        rentalRepository.save(rental);
+    }
+
+    @Override
+    public void deleteRental(Long id) {
+        Rental rental = this.rentalRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluguel não encontrado"));
+
+        if (rental.getReturnDate() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível excluir o aluguel pois o livro ainda não foi devolvido");
+        }
+
+        rentalRepository.deleteById(id);
     }
 }

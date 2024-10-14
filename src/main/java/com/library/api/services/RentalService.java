@@ -11,4 +11,8 @@ public interface RentalService {
     PagedResultDTO<RentalResponseDTO> getAll(int page, int size);
 
     RentalResponseDTO getById(Long id);
+
+    void returnRental(Long id);
+
+    void deleteRental(Long id);
 }

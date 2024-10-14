@@ -40,7 +40,7 @@ public class Rental {
         this.createdAt = LocalDateTime.now();
         this.book = book;
         this.customer = customer;
-        this.rentalDate = data.rentalDate();
+        this.rentalDate = LocalDate.now();
         this.forecastDate = data.forecastDate();
     }
 }

@@ -41,4 +41,19 @@ public class RentalController {
         RentalResponseDTO rental = this.rentalService.getById(id);
         return ResponseEntity.ok(rental);
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Return rental with current date")
+    public ResponseEntity<Void> returnRental(@PathVariable Long id) {
+        this.rentalService.returnRental(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete rental")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.rentalService.deleteRental(id);
+        return ResponseEntity.noContent().build();
+    }
 }
