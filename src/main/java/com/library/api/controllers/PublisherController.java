@@ -1,5 +1,6 @@
 package com.library.api.controllers;
 
+import com.library.api.dtos.SummaryDataDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.dtos.publisher.PublisherRequestDTO;
 import com.library.api.dtos.publisher.PublisherResponseDTO;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/publishers")
@@ -40,6 +43,13 @@ public class PublisherController {
     public ResponseEntity<PublisherResponseDTO> getById(@PathVariable Long id) {
         PublisherResponseDTO publisher = this.publisherService.getById(id);
         return ResponseEntity.ok(publisher);
+    }
+
+    @GetMapping("/summary-data")
+    @Operation(summary = "get summary data of publishers")
+    public ResponseEntity<List<SummaryDataDTO>> getSummaryData() {
+        List<SummaryDataDTO> publishers = this.publisherService.getSummaryData();
+        return ResponseEntity.ok(publishers);
     }
 
     @PutMapping("/{id}")

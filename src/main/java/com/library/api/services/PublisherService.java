@@ -1,9 +1,12 @@
 package com.library.api.services;
 
+import com.library.api.dtos.SummaryDataDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.dtos.publisher.PublisherRequestDTO;
 import com.library.api.dtos.publisher.PublisherResponseDTO;
 import com.library.api.entities.Publisher;
+
+import java.util.List;
 
 public interface PublisherService {
     Publisher createPublisher(PublisherRequestDTO body);
@@ -15,4 +18,6 @@ public interface PublisherService {
     void updatePublisher(Long id, PublisherRequestDTO body);
 
     void deletePublisher(Long id);
+
+    List<SummaryDataDTO> getSummaryData();
 }

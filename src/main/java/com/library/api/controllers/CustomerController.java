@@ -1,5 +1,6 @@
 package com.library.api.controllers;
 
+import com.library.api.dtos.SummaryDataDTO;
 import com.library.api.dtos.customer.CustomerRequestDTO;
 import com.library.api.dtos.customer.CustomerResponseDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -40,6 +43,13 @@ public class CustomerController {
     public ResponseEntity<CustomerResponseDTO> getById(@PathVariable Long id) {
         CustomerResponseDTO customer = this.customerService.getById(id);
         return ResponseEntity.ok(customer);
+    }
+
+    @GetMapping("/summary-data")
+    @Operation(summary = "get summary data of customers")
+    public ResponseEntity<List<SummaryDataDTO>> getSummaryData() {
+        List<SummaryDataDTO> customers = this.customerService.getSummaryData();
+        return ResponseEntity.ok(customers);
     }
 
     @PutMapping("/{id}")

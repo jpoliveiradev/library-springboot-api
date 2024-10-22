@@ -1,5 +1,6 @@
 package com.library.api.services.impl;
 
+import com.library.api.dtos.SummaryDataDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.dtos.publisher.PublisherRequestDTO;
 import com.library.api.dtos.publisher.PublisherResponseDTO;
@@ -16,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PublisherServiceImpl implements PublisherService {
     @Autowired
@@ -27,11 +31,11 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public Publisher createPublisher(PublisherRequestDTO data) {
-        if (publisherRepository.existsByName(data.name()))
+        if (this.publisherRepository.existsByName(data.name()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Editora já cadastrada");
 
         Publisher newPublisher = new Publisher(data);
-        publisherRepository.save(newPublisher);
+        this.publisherRepository.save(newPublisher);
 
         return newPublisher;
     }
@@ -41,7 +45,7 @@ public class PublisherServiceImpl implements PublisherService {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Publisher> publishersPage = this.publisherRepository.findAll(pageable);
-        Page<PublisherResponseDTO> publishersDTOPage = publishersPage.map(publisherMapper::mapPublisherToDTO);
+        Page<PublisherResponseDTO> publishersDTOPage = publishersPage.map(this.publisherMapper::mapPublisherToDTO);
 
         return new PagedResultDTO<>(
                 publishersDTOPage.getContent(),
@@ -57,7 +61,15 @@ public class PublisherServiceImpl implements PublisherService {
         Publisher publisher = this.publisherRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
 
-        return publisherMapper.mapPublisherToDTO(publisher);
+        return this.publisherMapper.mapPublisherToDTO(publisher);
+    }
+
+    @Override
+    public List<SummaryDataDTO> getSummaryData() {
+        List<Publisher> publishers = this.publisherRepository.findAll();
+
+        return publishers.stream().map(this.publisherMapper::mapPublisherToSummaryDataDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -65,22 +77,22 @@ public class PublisherServiceImpl implements PublisherService {
         Publisher publisher = this.publisherRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
 
-        if (!data.name().equals(publisher.getName()) && publisherRepository.existsByName(data.name()))
+        if (!data.name().equals(publisher.getName()) && this.publisherRepository.existsByName(data.name()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Editora já cadastrada");
 
         publisher.setName(data.name());
         publisher.setCity(data.city());
 
-        publisherRepository.save(publisher);
+        this.publisherRepository.save(publisher);
     }
 
     @Override
     public void deletePublisher(Long id) {
-        if (!publisherRepository.existsById(id))
+        if (!this.publisherRepository.existsById(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada");
-        if (bookRepository.existsByPublisherId(id))
+        if (this.bookRepository.existsByPublisherId(id))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Existem livros cadastrados com essa editora");
 
-        publisherRepository.deleteById(id);
+        this.publisherRepository.deleteById(id);
     }
 }

@@ -35,13 +35,13 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public Rental createRental(RentalRequestCreateDTO data) {
-        Book book = bookRepository.findById(data.book_id())
+        Book book = this.bookRepository.findById(data.book_id())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrada"));
-        Customer customer = customerRepository.findById(data.customer_id())
+        Customer customer = this.customerRepository.findById(data.customer_id())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrada"));
 
         Rental newRental = new Rental(data, book, customer);
-        rentalRepository.save(newRental);
+        this.rentalRepository.save(newRental);
 
         return newRental;
     }
@@ -50,7 +50,7 @@ public class RentalServiceImpl implements RentalService {
     public PagedResultDTO<RentalResponseDTO> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Rental> rentalsPage = this.rentalRepository.findAll(pageable);
-        Page<RentalResponseDTO> rentalsDTOPage = rentalsPage.map(rentalMapper::mapRentalToDTO);
+        Page<RentalResponseDTO> rentalsDTOPage = rentalsPage.map(this.rentalMapper::mapRentalToDTO);
 
         return new PagedResultDTO<>(
                 rentalsDTOPage.getContent(),
@@ -66,7 +66,7 @@ public class RentalServiceImpl implements RentalService {
         Rental rental = this.rentalRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluguel não encontrado"));
 
-        return rentalMapper.mapRentalToDTO(rental);
+        return this.rentalMapper.mapRentalToDTO(rental);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluguel não encontrado"));
 
         rental.setReturnDate(LocalDate.now());
-        rentalRepository.save(rental);
+        this.rentalRepository.save(rental);
     }
 
     @Override
@@ -87,6 +87,6 @@ public class RentalServiceImpl implements RentalService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível excluir o aluguel pois o livro ainda não foi devolvido");
         }
 
-        rentalRepository.deleteById(id);
+        this.rentalRepository.deleteById(id);
     }
 }

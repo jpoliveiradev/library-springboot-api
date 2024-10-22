@@ -1,6 +1,6 @@
 package com.library.api.mappers;
 
-import com.library.api.dtos.customer.CustomerRequestDTO;
+import com.library.api.dtos.SummaryDataDTO;
 import com.library.api.dtos.customer.CustomerResponseDTO;
 import com.library.api.entities.Customer;
 import org.springframework.stereotype.Component;
@@ -14,6 +14,13 @@ public class CustomerMapper {
                 customer.getEmail(),
                 customer.getAddress(),
                 customer.getCity()
+        );
+    }
+
+    public SummaryDataDTO mapCustomerToSummaryDataDTO(Customer customer) {
+        return new SummaryDataDTO(
+                customer.getId(),
+                customer.getName()
         );
     }
 }

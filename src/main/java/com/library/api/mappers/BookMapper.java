@@ -1,5 +1,6 @@
 package com.library.api.mappers;
 
+import com.library.api.dtos.SummaryDataDTO;
 import com.library.api.dtos.book.BookResponseDTO;
 import com.library.api.entities.Book;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,14 @@ public class BookMapper {
                 book.getAuthor(),
                 book.getReleaseYear(),
                 book.getQuantity(),
-                book.getPublisher()
+                book.getPublisher().getName()
+        );
+    }
+
+    public SummaryDataDTO mapBookToSummaryDataDTO(Book book) {
+        return new SummaryDataDTO(
+                book.getId(),
+                book.getName()
         );
     }
 }

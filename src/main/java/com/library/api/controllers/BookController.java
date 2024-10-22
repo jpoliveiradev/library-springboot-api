@@ -1,5 +1,6 @@
 package com.library.api.controllers;
 
+import com.library.api.dtos.SummaryDataDTO;
 import com.library.api.dtos.book.BookRequestDTO;
 import com.library.api.dtos.book.BookResponseDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
@@ -40,6 +43,13 @@ public class BookController {
     public ResponseEntity<BookResponseDTO> getById(@PathVariable Long id) {
         BookResponseDTO book = this.bookService.getById(id);
         return ResponseEntity.ok(book);
+    }
+
+    @GetMapping("/summary-data")
+    @Operation(summary = "get summary data of books")
+    public ResponseEntity<List<SummaryDataDTO>> getSummaryData() {
+        List<SummaryDataDTO> books = this.bookService.getSummaryData();
+        return ResponseEntity.ok(books);
     }
 
     @PutMapping("/{id}")
