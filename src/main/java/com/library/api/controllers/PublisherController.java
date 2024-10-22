@@ -1,9 +1,9 @@
 package com.library.api.controllers;
 
+import com.library.api.dtos.SummaryDataDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.dtos.publisher.PublisherRequestDTO;
 import com.library.api.dtos.publisher.PublisherResponseDTO;
-import com.library.api.dtos.publisher.PublisherSummaryDataDTO;
 import com.library.api.entities.Publisher;
 import com.library.api.services.PublisherService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,10 +45,10 @@ public class PublisherController {
         return ResponseEntity.ok(publisher);
     }
 
-    @GetMapping("/SummaryData")
+    @GetMapping("/summary-data")
     @Operation(summary = "get summary data of publishers")
-    public ResponseEntity<List<PublisherSummaryDataDTO>> getSummaryData() {
-        List<PublisherSummaryDataDTO> publishers = this.publisherService.getSummaryData();
+    public ResponseEntity<List<SummaryDataDTO>> getSummaryData() {
+        List<SummaryDataDTO> publishers = this.publisherService.getSummaryData();
         return ResponseEntity.ok(publishers);
     }
 

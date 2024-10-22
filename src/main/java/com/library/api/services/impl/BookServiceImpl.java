@@ -1,5 +1,6 @@
 package com.library.api.services.impl;
 
+import com.library.api.dtos.SummaryDataDTO;
 import com.library.api.dtos.book.BookRequestDTO;
 import com.library.api.dtos.book.BookResponseDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
@@ -18,6 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -32,14 +36,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book createBook(BookRequestDTO data) {
-        if (bookRepository.existsByName(data.name()))
+        if (this.bookRepository.existsByName(data.name()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Livro já cadastrado");
 
-        Publisher publisher = publisherRepository.findById(data.publisher_id())
+        Publisher publisher = this.publisherRepository.findById(data.publisher_id())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
 
         Book newBook = new Book(data, publisher);
-        bookRepository.save(newBook);
+        this.bookRepository.save(newBook);
 
         return newBook;
     }
@@ -49,7 +53,7 @@ public class BookServiceImpl implements BookService {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Book> booksPage = this.bookRepository.findAll(pageable);
-        Page<BookResponseDTO> booksDTOPage = booksPage.map(bookMapper::mapBookToDTO);
+        Page<BookResponseDTO> booksDTOPage = booksPage.map(this.bookMapper::mapBookToDTO);
 
         return new PagedResultDTO<>(
                 booksDTOPage.getContent(),
@@ -65,7 +69,7 @@ public class BookServiceImpl implements BookService {
         Book book = this.bookRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado"));
 
-        return bookMapper.mapBookToDTO(book);
+        return this.bookMapper.mapBookToDTO(book);
     }
 
     @Override
@@ -73,10 +77,10 @@ public class BookServiceImpl implements BookService {
         Book book = this.bookRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado"));
 
-        Publisher publisher = publisherRepository.findById(data.publisher_id())
+        Publisher publisher = this.publisherRepository.findById(data.publisher_id())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
 
-        if (!data.name().equals(book.getName()) && bookRepository.existsByName(data.name()))
+        if (!data.name().equals(book.getName()) && this.bookRepository.existsByName(data.name()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Livro já cadastrado");
 
         book.setName(data.name());
@@ -85,17 +89,25 @@ public class BookServiceImpl implements BookService {
         book.setQuantity(data.quantity());
         book.setPublisher(publisher);
 
-        bookRepository.save(book);
+        this.bookRepository.save(book);
     }
 
     @Override
     public void deleteBook(Long id) {
-        if (!bookRepository.existsById(id)) {
+        if (!this.bookRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado");
         }
-        if (rentalRepository.existsByBookId(id)) {
+        if (this.rentalRepository.existsByBookId(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Existem aluguéis cadastrados com esse livro");
         }
-        bookRepository.deleteById(id);
+        this.bookRepository.deleteById(id);
+    }
+
+    @Override
+    public List<SummaryDataDTO> getSummaryData() {
+       List<Book> books = this.bookRepository.findAll();
+
+       return books.stream().map(this.bookMapper::mapBookToSummaryDataDTO)
+               .collect(Collectors.toList());
     }
 }
