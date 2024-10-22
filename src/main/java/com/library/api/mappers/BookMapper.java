@@ -13,7 +13,7 @@ public class BookMapper {
                 book.getAuthor(),
                 book.getReleaseYear(),
                 book.getQuantity(),
-                book.getPublisher()
+                book.getPublisher().getName()
         );
     }
 }

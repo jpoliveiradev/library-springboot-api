@@ -3,6 +3,7 @@ package com.library.api.services.impl;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.dtos.publisher.PublisherRequestDTO;
 import com.library.api.dtos.publisher.PublisherResponseDTO;
+import com.library.api.dtos.publisher.PublisherSummaryDataDTO;
 import com.library.api.entities.Publisher;
 import com.library.api.mappers.PublisherMapper;
 import com.library.api.repositories.BookRepository;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PublisherServiceImpl implements PublisherService {
@@ -58,6 +62,14 @@ public class PublisherServiceImpl implements PublisherService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Editora não encontrada"));
 
         return publisherMapper.mapPublisherToDTO(publisher);
+    }
+
+    @Override
+    public List<PublisherSummaryDataDTO> getSummaryData() {
+        List<Publisher> publishers = this.publisherRepository.findAll();
+
+        return publishers.stream().map(publisherMapper::mapPublisherToSummaryDataDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
