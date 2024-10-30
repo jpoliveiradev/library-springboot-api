@@ -73,6 +73,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<SummaryDataDTO> getSummaryData() {
+        List<Book> books = this.bookRepository.findAll();
+
+        return books.stream().map(this.bookMapper::mapBookToSummaryDataDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void updateBook(Long id, BookRequestDTO data) {
         Book book = this.bookRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrado"));
@@ -101,13 +109,5 @@ public class BookServiceImpl implements BookService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Existem aluguéis cadastrados com esse livro");
         }
         this.bookRepository.deleteById(id);
-    }
-
-    @Override
-    public List<SummaryDataDTO> getSummaryData() {
-       List<Book> books = this.bookRepository.findAll();
-
-       return books.stream().map(this.bookMapper::mapBookToSummaryDataDTO)
-               .collect(Collectors.toList());
     }
 }

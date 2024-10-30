@@ -11,7 +11,7 @@ import java.util.List;
 public interface CustomerService {
     Customer createCustomer(CustomerRequestDTO data);
 
-    PagedResultDTO<CustomerResponseDTO> getAll(int page, int size);
+    PagedResultDTO<CustomerResponseDTO> getAll(String search, int page, int size);
 
     CustomerResponseDTO getById(Long id);
 

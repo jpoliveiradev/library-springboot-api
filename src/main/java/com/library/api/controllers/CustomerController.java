@@ -33,8 +33,8 @@ public class CustomerController {
 
     @GetMapping
     @Operation(summary = "Get all customers")
-    public ResponseEntity<PagedResultDTO<CustomerResponseDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        PagedResultDTO<CustomerResponseDTO> allCustomers = this.customerService.getAll(page, size);
+    public ResponseEntity<PagedResultDTO<CustomerResponseDTO>> getAll(@RequestParam(value = "search", required = false) String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        PagedResultDTO<CustomerResponseDTO> allCustomers = this.customerService.getAll(search, page, size);
         return ResponseEntity.ok(allCustomers);
     }
 
