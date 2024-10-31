@@ -33,8 +33,8 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "Get all books")
-    public ResponseEntity<PagedResultDTO<BookResponseDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        PagedResultDTO<BookResponseDTO> allBooks = this.bookService.getAll(page, size);
+    public ResponseEntity<PagedResultDTO<BookResponseDTO>> getAll(@RequestParam(required = false) String search,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        PagedResultDTO<BookResponseDTO> allBooks = this.bookService.getAll(search, page, size);
         return ResponseEntity.ok(allBooks);
     }
 

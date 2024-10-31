@@ -47,9 +47,9 @@ public class CustomerServiceImpl implements CustomerService {
     public PagedResultDTO<CustomerResponseDTO> getAll(String search, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
-        Specification<Customer> spec = CustomerSpecification.containsTextInColumns(search);
+        Specification<Customer> searchSpecification = CustomerSpecification.searchSpecification(search);
 
-        Page<Customer> customersPage = this.customerRepository.findAll(spec, pageable);
+        Page<Customer> customersPage = this.customerRepository.findAll(searchSpecification, pageable);
         Page<CustomerResponseDTO> customersDTOPage = customersPage.map(this.customerMapper::mapCustomerToDTO);
 
         return new PagedResultDTO<>(

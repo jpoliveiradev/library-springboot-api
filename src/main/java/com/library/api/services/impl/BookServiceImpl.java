@@ -11,10 +11,13 @@ import com.library.api.repositories.BookRepository;
 import com.library.api.repositories.PublisherRepository;
 import com.library.api.repositories.RentalRepository;
 import com.library.api.services.BookService;
+import com.library.api.specifications.BookSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,10 +52,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PagedResultDTO<BookResponseDTO> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public PagedResultDTO<BookResponseDTO> getAll(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
-        Page<Book> booksPage = this.bookRepository.findAll(pageable);
+        Specification<Book> bookSpecification = BookSpecification.searchSpecification(search);
+        Page<Book> booksPage = this.bookRepository.findAll(bookSpecification,pageable);
         Page<BookResponseDTO> booksDTOPage = booksPage.map(this.bookMapper::mapBookToDTO);
 
         return new PagedResultDTO<>(

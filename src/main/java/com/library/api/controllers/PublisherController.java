@@ -33,8 +33,8 @@ public class PublisherController {
 
     @GetMapping
     @Operation(summary = "Get all publishers")
-    public ResponseEntity<PagedResultDTO<PublisherResponseDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        PagedResultDTO<PublisherResponseDTO> allCustomers = this.publisherService.getAll(page, size);
+    public ResponseEntity<PagedResultDTO<PublisherResponseDTO>> getAll(@RequestParam(required = false) String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        PagedResultDTO<PublisherResponseDTO> allCustomers = this.publisherService.getAll(search, page, size);
         return ResponseEntity.ok(allCustomers);
     }
 

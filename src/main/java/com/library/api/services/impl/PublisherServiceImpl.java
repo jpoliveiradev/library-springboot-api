@@ -9,10 +9,13 @@ import com.library.api.mappers.PublisherMapper;
 import com.library.api.repositories.BookRepository;
 import com.library.api.repositories.PublisherRepository;
 import com.library.api.services.PublisherService;
+import com.library.api.specifications.PublisherSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,10 +44,11 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
-    public PagedResultDTO<PublisherResponseDTO> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public PagedResultDTO<PublisherResponseDTO> getAll(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
-        Page<Publisher> publishersPage = this.publisherRepository.findAll(pageable);
+        Specification<Publisher> publisherSpecification = PublisherSpecification.searchSpecification(search);
+        Page<Publisher> publishersPage = this.publisherRepository.findAll(publisherSpecification, pageable);
         Page<PublisherResponseDTO> publishersDTOPage = publishersPage.map(this.publisherMapper::mapPublisherToDTO);
 
         return new PagedResultDTO<>(

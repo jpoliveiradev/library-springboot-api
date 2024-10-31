@@ -11,7 +11,7 @@ import java.util.List;
 public interface BookService {
     Book createBook(BookRequestDTO body);
 
-    PagedResultDTO<BookResponseDTO> getAll(int page, int size);
+    PagedResultDTO<BookResponseDTO> getAll(String search,int page, int size);
 
     BookResponseDTO getById(Long id);
 
