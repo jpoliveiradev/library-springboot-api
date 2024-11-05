@@ -52,6 +52,13 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
+    @GetMapping("/available-summary-data")
+    @Operation(summary = "Get summary data of available books")
+    public ResponseEntity<List<SummaryDataDTO>> getAvailableSummaryData() {
+        List<SummaryDataDTO> availableBooks = this.bookService.getAvailableSummaryData();
+        return ResponseEntity.ok(availableBooks);
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "Update book")
     public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody BookRequestDTO body) {

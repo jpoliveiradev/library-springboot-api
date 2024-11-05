@@ -20,4 +20,6 @@ public interface BookService {
     void deleteBook(Long id);
 
     List<SummaryDataDTO> getSummaryData();
+
+    List<SummaryDataDTO> getAvailableSummaryData();
 }

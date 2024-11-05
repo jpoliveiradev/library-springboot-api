@@ -56,7 +56,7 @@ public class BookServiceImpl implements BookService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
         Specification<Book> bookSpecification = BookSpecification.searchSpecification(search);
-        Page<Book> booksPage = this.bookRepository.findAll(bookSpecification,pageable);
+        Page<Book> booksPage = this.bookRepository.findAll(bookSpecification, pageable);
         Page<BookResponseDTO> booksDTOPage = booksPage.map(this.bookMapper::mapBookToDTO);
 
         return new PagedResultDTO<>(
@@ -81,6 +81,14 @@ public class BookServiceImpl implements BookService {
         List<Book> books = this.bookRepository.findAll();
 
         return books.stream().map(this.bookMapper::mapBookToSummaryDataDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SummaryDataDTO> getAvailableSummaryData() {
+        return bookRepository.findAll().stream()
+                .filter(book -> book.getQuantity() > 0)
+                .map(bookMapper::mapBookToSummaryDataDTO)
                 .collect(Collectors.toList());
     }
 
