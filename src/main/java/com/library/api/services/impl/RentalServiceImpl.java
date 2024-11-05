@@ -11,10 +11,13 @@ import com.library.api.repositories.BookRepository;
 import com.library.api.repositories.CustomerRepository;
 import com.library.api.repositories.RentalRepository;
 import com.library.api.services.RentalService;
+import com.library.api.specifications.RentalSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -47,9 +50,11 @@ public class RentalServiceImpl implements RentalService {
     }
 
     @Override
-    public PagedResultDTO<RentalResponseDTO> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Rental> rentalsPage = this.rentalRepository.findAll(pageable);
+    public PagedResultDTO<RentalResponseDTO> getAll(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+
+        Specification<Rental> rentalSpecification = RentalSpecification.searchSpecification(search);
+        Page<Rental> rentalsPage = this.rentalRepository.findAll(rentalSpecification, pageable);
         Page<RentalResponseDTO> rentalsDTOPage = rentalsPage.map(this.rentalMapper::mapRentalToDTO);
 
         return new PagedResultDTO<>(
