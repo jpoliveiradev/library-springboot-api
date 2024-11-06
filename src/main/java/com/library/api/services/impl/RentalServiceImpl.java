@@ -43,9 +43,14 @@ public class RentalServiceImpl implements RentalService {
         Customer customer = this.customerRepository.findById(data.customer_id())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrada"));
 
-        Rental newRental = new Rental(data, book, customer);
-        this.rentalRepository.save(newRental);
+        if (book.getQuantity() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Livro não disponível");
+        }
 
+        book.setQuantity(book.getQuantity() - 1);
+        Rental newRental = new Rental(data, book, customer);
+
+        this.rentalRepository.save(newRental);
         return newRental;
     }
 
@@ -80,6 +85,7 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluguel não encontrado"));
 
         rental.setReturnDate(LocalDate.now());
+        rental.getBook().setQuantity(rental.getBook().getQuantity() + 1);
         this.rentalRepository.save(rental);
     }
 
