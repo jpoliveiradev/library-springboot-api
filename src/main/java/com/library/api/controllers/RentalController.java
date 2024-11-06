@@ -30,8 +30,8 @@ public class RentalController {
 
     @GetMapping
     @Operation(summary = "Get all rentals")
-    public ResponseEntity<PagedResultDTO<RentalResponseDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        PagedResultDTO<RentalResponseDTO> allRentals = this.rentalService.getAll(page, size);
+    public ResponseEntity<PagedResultDTO<RentalResponseDTO>> getAll(@RequestParam(required = false) String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        PagedResultDTO<RentalResponseDTO> allRentals = this.rentalService.getAll(search, page, size);
         return ResponseEntity.ok(allRentals);
     }
 

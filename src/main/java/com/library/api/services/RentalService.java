@@ -8,7 +8,7 @@ import com.library.api.entities.Rental;
 public interface RentalService {
     Rental createRental(RentalRequestCreateDTO body);
 
-    PagedResultDTO<RentalResponseDTO> getAll(int page, int size);
+    PagedResultDTO<RentalResponseDTO> getAll(String search, int page, int size);
 
     RentalResponseDTO getById(Long id);
 

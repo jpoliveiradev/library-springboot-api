@@ -5,6 +5,7 @@ import com.library.api.dtos.customer.CustomerRequestDTO;
 import com.library.api.dtos.customer.CustomerResponseDTO;
 import com.library.api.dtos.pagination.PagedResultDTO;
 import com.library.api.entities.Customer;
+import com.library.api.specifications.CustomerSpecification;
 import com.library.api.mappers.CustomerMapper;
 import com.library.api.repositories.CustomerRepository;
 import com.library.api.repositories.RentalRepository;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,10 +44,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public PagedResultDTO<CustomerResponseDTO> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public PagedResultDTO<CustomerResponseDTO> getAll(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
-        Page<Customer> customersPage = this.customerRepository.findAll(pageable);
+        Specification<Customer> searchSpecification = CustomerSpecification.searchSpecification(search);
+
+        Page<Customer> customersPage = this.customerRepository.findAll(searchSpecification, pageable);
         Page<CustomerResponseDTO> customersDTOPage = customersPage.map(this.customerMapper::mapCustomerToDTO);
 
         return new PagedResultDTO<>(
@@ -66,10 +71,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<SummaryDataDTO> getSummaryData() {
-       List<Customer> customers = this.customerRepository.findAll();
+        List<Customer> customers = this.customerRepository.findAll();
 
-       return customers.stream().map(this.customerMapper::mapCustomerToSummaryDataDTO)
-               .collect(Collectors.toList());
+        return customers.stream().map(this.customerMapper::mapCustomerToSummaryDataDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

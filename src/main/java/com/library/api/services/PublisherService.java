@@ -11,7 +11,7 @@ import java.util.List;
 public interface PublisherService {
     Publisher createPublisher(PublisherRequestDTO body);
 
-    PagedResultDTO<PublisherResponseDTO> getAll(int page, int size);
+    PagedResultDTO<PublisherResponseDTO> getAll(String search, int page, int size);
 
     PublisherResponseDTO getById(Long id);
 

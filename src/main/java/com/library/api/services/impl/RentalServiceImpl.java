@@ -11,10 +11,13 @@ import com.library.api.repositories.BookRepository;
 import com.library.api.repositories.CustomerRepository;
 import com.library.api.repositories.RentalRepository;
 import com.library.api.services.RentalService;
+import com.library.api.specifications.RentalSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,16 +43,23 @@ public class RentalServiceImpl implements RentalService {
         Customer customer = this.customerRepository.findById(data.customer_id())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrada"));
 
-        Rental newRental = new Rental(data, book, customer);
-        this.rentalRepository.save(newRental);
+        if (book.getQuantity() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Livro não disponível");
+        }
 
+        book.setQuantity(book.getQuantity() - 1);
+        Rental newRental = new Rental(data, book, customer);
+
+        this.rentalRepository.save(newRental);
         return newRental;
     }
 
     @Override
-    public PagedResultDTO<RentalResponseDTO> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Rental> rentalsPage = this.rentalRepository.findAll(pageable);
+    public PagedResultDTO<RentalResponseDTO> getAll(String search, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+
+        Specification<Rental> rentalSpecification = RentalSpecification.searchSpecification(search);
+        Page<Rental> rentalsPage = this.rentalRepository.findAll(rentalSpecification, pageable);
         Page<RentalResponseDTO> rentalsDTOPage = rentalsPage.map(this.rentalMapper::mapRentalToDTO);
 
         return new PagedResultDTO<>(
@@ -75,6 +85,7 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluguel não encontrado"));
 
         rental.setReturnDate(LocalDate.now());
+        rental.getBook().setQuantity(rental.getBook().getQuantity() + 1);
         this.rentalRepository.save(rental);
     }
 
