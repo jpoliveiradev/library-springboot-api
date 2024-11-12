@@ -13,7 +13,8 @@ public class RentalMapper {
                 rental.getCustomer().getName(),
                 rental.getRentalDate(),
                 rental.getForecastDate(),
-                rental.getReturnDate()
+                rental.getReturnDate(),
+                rental.getStatus().getName()
         );
     }
 }

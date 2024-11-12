@@ -32,15 +32,20 @@ public class Rental {
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
+    @ManyToOne
+    @JoinColumn(name = "status_id", referencedColumnName = "id")
+    private RentalStatus status;
+
     public Rental() {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Rental(RentalRequestCreateDTO data, Book book, Customer customer) {
+    public Rental(RentalRequestCreateDTO data, Book book, Customer customer, RentalStatus rentalStatus) {
         this.createdAt = LocalDateTime.now();
         this.book = book;
         this.customer = customer;
         this.rentalDate = LocalDate.now();
         this.forecastDate = data.forecastDate();
+        this.status = rentalStatus;
     }
 }
