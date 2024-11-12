@@ -1,4 +1,4 @@
-CREATE TABLE customers (
+CREATE TABLE IF NOT EXISTS customers (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
     name VARCHAR(100) NOT NULL,

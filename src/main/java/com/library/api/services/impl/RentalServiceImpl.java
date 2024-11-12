@@ -6,10 +6,13 @@ import com.library.api.dtos.rentals.RentalResponseDTO;
 import com.library.api.entities.Book;
 import com.library.api.entities.Customer;
 import com.library.api.entities.Rental;
+import com.library.api.entities.RentalStatus;
+import com.library.api.entities.enums.RentalStatusEnum;
 import com.library.api.mappers.RentalMapper;
 import com.library.api.repositories.BookRepository;
 import com.library.api.repositories.CustomerRepository;
 import com.library.api.repositories.RentalRepository;
+import com.library.api.repositories.RentalStatusRepository;
 import com.library.api.services.RentalService;
 import com.library.api.specifications.RentalSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,8 @@ public class RentalServiceImpl implements RentalService {
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
+    private RentalStatusRepository rentalStatusRepository;
+    @Autowired
     RentalMapper rentalMapper;
 
     @Override
@@ -42,13 +47,15 @@ public class RentalServiceImpl implements RentalService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Livro não encontrada"));
         Customer customer = this.customerRepository.findById(data.customer_id())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrada"));
+        RentalStatus rentalStatus = this.rentalStatusRepository.findById(RentalStatusEnum.PENDING.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Status de aluguel não encontrado"));
 
         if (book.getQuantity() <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Livro não disponível");
         }
 
         book.setQuantity(book.getQuantity() - 1);
-        Rental newRental = new Rental(data, book, customer);
+        Rental newRental = new Rental(data, book, customer, rentalStatus);
 
         this.rentalRepository.save(newRental);
         return newRental;
@@ -86,6 +93,16 @@ public class RentalServiceImpl implements RentalService {
 
         rental.setReturnDate(LocalDate.now());
         rental.getBook().setQuantity(rental.getBook().getQuantity() + 1);
+        RentalStatus rentalStatus;
+        if (rental.getReturnDate().isAfter(rental.getForecastDate())) {
+            rentalStatus = this.rentalStatusRepository.findById(RentalStatusEnum.LATE_TIME.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Status de aluguel não encontrado"));
+        } else {
+            rentalStatus = this.rentalStatusRepository.findById(RentalStatusEnum.ON_TIME.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Status de aluguel não encontrado"));
+        }
+
+        rental.setStatus(rentalStatus);
         this.rentalRepository.save(rental);
     }
 

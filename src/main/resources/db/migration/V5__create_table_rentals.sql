@@ -1,4 +1,4 @@
-CREATE TABLE rentals (
+CREATE TABLE IF NOT EXISTS rentals (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL,
     customer_id BIGINT NOT NULL,
@@ -6,6 +6,8 @@ CREATE TABLE rentals (
     rental_date DATE NOT NULL,
     forecast_date DATE NOT NULL,
     return_date DATE,
+    status_id BIGINT NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES customers(id),
-    FOREIGN KEY (book_id) REFERENCES books(id)
+    FOREIGN KEY (book_id) REFERENCES books(id),
+    FOREIGN KEY (status_id) REFERENCES rental_status(id)
 );
